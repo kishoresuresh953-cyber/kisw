@@ -1,0 +1,122 @@
+{
+  "name": "Ad Campaign Auto-Draft Generator",
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "id": "2",
+      "name": "Read Google Sheet (Campaigns)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [400, 300],
+      "parameters": {
+        "operation": "read",
+        "range": "Campaigns!A:Z",
+        "sheetId": "YOUR_GOOGLE_SHEET_ID"
+      },
+      "credentials": {
+        "googleApi": "Google API Credential"
+      }
+    },
+    {
+      "id": "3",
+      "name": "Filter Generate Rows",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [600, 300],
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json[\"Status\"]}}",
+              "operation": "equal",
+              "value2": "generate"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "4",
+      "name": "Gemini 2.5 Pro (Optimize Ad Copy)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [800, 300],
+      "parameters": {
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-latest:generateContent?key=YOUR_GEMINI_API_KEY",
+        "method": "POST",
+        "responseFormat": "json",
+        "options": {},
+        "jsonParameters": true,
+        "bodyParametersJson": "={\"contents\":[{\"parts\":[{\"text\":\"Optimize this ad for high CTR and ROI. Input: Headline: {{$json[\\\"Headline\\\"]}}. Text: {{$json[\\\"PrimaryText\\\"]}}. Audience: {{$json[\\\"Audience\\\"]}}. Location: {{$json[\\\"Location\\\"]}}. Budget: {{$json[\\\"Budget\\\"]}}. Output JSON with optimized_headline, optimized_text, keywords, targeting.\"}]}]}"
+      }
+    },
+    {
+      "id": "5",
+      "name": "Create Meta Ads Draft",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1000, 200],
+      "parameters": {
+        "url": "https://graph.facebook.com/v20.0/YOUR_AD_ACCOUNT_ID/adcreatives",
+        "method": "POST",
+        "responseFormat": "json",
+        "jsonParameters": true,
+        "authentication": "predefinedCredentialType",
+        "bodyParametersJson": "={\"name\":\"{{$json[\\\"CampaignName\\\"]}}\",\"object_story_spec\":{\"page_id\":\"YOUR_PAGE_ID\",\"link_data\":{\"message\":\"={{$json[\\\"optimized_text\\\"]}}\",\"link\":\"https://mirrorpets.com\",\"caption\":\"MirrorPets.com\",\"description\":\"={{$json[\\\"optimized_headline\\\"]}}\",\"picture\":\"={{$json[\\\"PosterURL\\\"]}}\"}},\"access_token\":\"YOUR_META_ACCESS_TOKEN\"}"
+      }
+    },
+    {
+      "id": "6",
+      "name": "Create Google Ads Draft",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1000, 400],
+      "parameters": {
+        "url": "https://googleads.googleapis.com/v14/customers/YOUR_CUSTOMER_ID/googleAds:mutate",
+        "method": "POST",
+        "responseFormat": "json",
+        "jsonParameters": true,
+        "bodyParametersJson": "={\"mutateOperations\":[{\"campaignOperation\":{\"create\":{\"name\":\"{{$json[\\\"CampaignName\\\"]}}\",\"status\":\"PAUSED\",\"advertisingChannelType\":\"SEARCH\",\"manualCpc\":{},\"campaignBudget\":\"customers/YOUR_CUSTOMER_ID/campaignBudgets/YOUR_BUDGET_ID\"}}}]}"
+      }
+    },
+    {
+      "id": "7",
+      "name": "Update Sheet with Draft IDs",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [1200, 300],
+      "parameters": {
+        "operation": "update",
+        "sheetId": "YOUR_GOOGLE_SHEET_ID",
+        "range": "Campaigns!A:Z",
+        "updateAllMatches": true,
+        "dataMode": "autoMapInputData",
+        "keyName": "CampaignName",
+        "fieldsToMatch": ["CampaignName"],
+        "valueInputMode": "RAW",
+        "data": {
+          "Status": "draft_created",
+          "MetaDraftID": "={{$json[\"id\"]}}",
+          "GoogleDraftID": "={{$json[\"resourceName\"]}}"
+        }
+      },
+      "credentials": {
+        "googleApi": "Google API Credential"
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [ [ { "node": "Read Google Sheet (Campaigns)", "type": "main", "index": 0 } ] ] },
+    "Read Google Sheet (Campaigns)": { "main": [ [ { "node": "Filter Generate Rows", "type": "main", "index": 0 } ] ] },
+    "Filter Generate Rows": { "main": [ [ { "node": "Gemini 2.5 Pro (Optimize Ad Copy)", "type": "main", "index": 0 } ] ] },
+    "Gemini 2.5 Pro (Optimize Ad Copy)": { "main": [ [ { "node": "Create Meta Ads Draft", "type": "main", "index": 0 }, { "node": "Create Google Ads Draft", "type": "main", "index": 0 } ] ] },
+    "Create Meta Ads Draft": { "main": [ [ { "node": "Update Sheet with Draft IDs", "type": "main", "index": 0 } ] ] },
+    "Create Google Ads Draft": { "main": [ [ { "node": "Update Sheet with Draft IDs", "type": "main", "index": 0 } ] ] }
+  }
+}
