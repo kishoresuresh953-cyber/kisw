@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kisw Market | Online Product Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav" aria-label="Primary navigation">
+        <a class="brand" href="#hero" aria-label="Kisw Market home">
+          <span class="brand-mark">K</span>
+          <span>Kisw Market</span>
+        </a>
+        <div class="nav-links">
+          <a href="#products">Products</a>
+          <a href="#features">Why us</a>
+          <a href="#checkout">Checkout</a>
+        </div>
+        <button class="cart-button" type="button" aria-label="View cart">
+          Cart <span id="cart-count">0</span>
+        </button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" id="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Launch-ready storefront</p>
+          <h1>Sell premium products online with a polished shopping experience.</h1>
+          <p class="hero-text">
+            A responsive online store template with product cards, cart totals,
+            checkout details, and trust-building selling points.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#products">Shop products</a>
+            <a class="button secondary" href="#features">See benefits</a>
+          </div>
+        </div>
+        <aside class="hero-card" aria-label="Featured deal">
+          <span class="deal-badge">Best seller</span>
+          <h2>Smart Essentials Bundle</h2>
+          <p>Everything customers need to upgrade their day-to-day workflow.</p>
+          <div class="price-row">
+            <strong>$149</strong>
+            <span>Free shipping</span>
+          </div>
+        </aside>
+      </section>
+
+      <section class="features" id="features" aria-labelledby="features-title">
+        <div>
+          <p class="eyebrow">Store advantages</p>
+          <h2 id="features-title">Built to convert visitors into buyers</h2>
+        </div>
+        <div class="feature-grid">
+          <article>
+            <h3>Fast delivery</h3>
+            <p>Promote free shipping, delivery estimates, and purchase confidence.</p>
+          </article>
+          <article>
+            <h3>Secure checkout</h3>
+            <p>Clear order summary and payment-ready checkout form layout.</p>
+          </article>
+          <article>
+            <h3>Mobile first</h3>
+            <p>Responsive product browsing works smoothly on phones and desktops.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="products-section" id="products" aria-labelledby="products-title">
+        <div class="section-heading">
+          <p class="eyebrow">Featured products</p>
+          <h2 id="products-title">Popular picks for your customers</h2>
+        </div>
+        <div class="product-grid" id="product-grid"></div>
+      </section>
+
+      <section class="checkout" id="checkout" aria-labelledby="checkout-title">
+        <div class="cart-panel">
+          <p class="eyebrow">Your order</p>
+          <h2 id="checkout-title">Cart summary</h2>
+          <div id="cart-items" class="cart-items" aria-live="polite"></div>
+          <div class="totals">
+            <div><span>Subtotal</span><strong id="subtotal">$0.00</strong></div>
+            <div><span>Shipping</span><strong id="shipping">$0.00</strong></div>
+            <div class="grand-total"><span>Total</span><strong id="total">$0.00</strong></div>
+          </div>
+        </div>
+        <form class="checkout-form">
+          <p class="eyebrow">Checkout details</p>
+          <h2>Complete purchase</h2>
+          <label>
+            Full name
+            <input type="text" name="name" placeholder="Jane Customer" required />
+          </label>
+          <label>
+            Email address
+            <input type="email" name="email" placeholder="jane@example.com" required />
+          </label>
+          <label>
+            Delivery address
+            <textarea name="address" rows="3" placeholder="Street, city, state" required></textarea>
+          </label>
+          <button class="button primary" type="submit">Place demo order</button>
+          <p class="form-note">Demo only: connect this form to your payment provider before accepting real orders.</p>
+        </form>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>&copy; 2026 Kisw Market. Built for online selling.</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
